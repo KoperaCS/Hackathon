@@ -18,7 +18,7 @@ CREATE TABLE report (
     user_id INT,                      -- can be NULL for anonymous
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    severity VARCHAR(20),             -- optional, AI-generated
+    severity ENUM('Low','Medium','High'),             -- optional, AI-generated
     category VARCHAR(50),             -- optional, AI-generated
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
