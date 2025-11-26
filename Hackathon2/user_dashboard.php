@@ -2,6 +2,7 @@
 // user_dashboard.php
 session_start();
 require 'db.php';
+require 'gpt_classify.php';   // ⬅ include the GPT helper
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
     header("Location: login.php");
@@ -18,26 +19,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     if ($title === '' || $content === '') {
         $msg = "Title and content are required.";
     } else {
+        // Use null for anonymous reports
         $user_id = $anonymous ? null : $_SESSION['user_id'];
 
+        // 🔍 Call GPT to classify report
+        list($severity, $category) = classify_report($title, $content);
+
+        // Insert into DB with GPT fields
         $stmt = $conn->prepare("
             INSERT INTO report (user_id, title, content, severity, category)
-            VALUES (?, ?, ?, NULL, NULL)
+            VALUES (?, ?, ?, ?, ?)
         ");
 
-        // For nullable INT in prepared statement:
-        if ($user_id === null) {
-            $stmt->bind_param("iss", $user_id, $title, $content); // null is fine here
-        } else {
-            $stmt->bind_param("iss", $user_id, $title, $content);
-        }
+        // 'i' for user_id (can be null), 's' for strings
+        $stmt->bind_param("issss", $user_id, $title, $content, $severity, $category);
 
         try {
             $stmt->execute();
-            $msg = "Report submitted successfully.";
+            $msg = "Report submitted successfully (tagged as $severity / $category).";
         } catch (mysqli_sql_exception $e) {
             $msg = "Error submitting report: " . $e->getMessage();
         }
+
         $stmt->close();
     }
 }
