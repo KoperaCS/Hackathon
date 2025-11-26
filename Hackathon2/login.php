@@ -9,7 +9,7 @@ if (isset($_SESSION['role'])) {
         header("Location: admin_dashboard.php");
         exit;
     } elseif ($_SESSION['role'] === 'user') {
-        header("Location: user_dashboard.php");
+        header("Location: employee_dashboard.php");
         exit;
     }
 }
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['role']     = 'user';
                     $_SESSION['user_id']  = $user_id;
                     $_SESSION['user_email'] = $email;
-                    header("Location: user_dashboard.php");
+                    header("Location: employee_dashboard.php");
                     exit;
                 } else {
                     $error = "Invalid password.";
