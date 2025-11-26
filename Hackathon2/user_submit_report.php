@@ -4,6 +4,7 @@ session_start();
 require 'db.php';
 require 'gpt_classify.php';   // ⬅➡ GPT classification included
 
+
 // Check if the user is logged in as a 'user'
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
     header("Location: login.php");
@@ -30,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
             INSERT INTO report (user_id, title, content, severity, category)
             VALUES (?, ?, ?, ?, ?)
         ");
-
         $stmt->bind_param("issss", $user_id, $title, $content, $severity, $category);
 
         try {
@@ -45,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     }
 }
 
-// Show success message
 if (isset($_GET['status']) && $_GET['status'] === 'success') {
     $msg = "Report submitted successfully.";
 }
@@ -76,13 +75,13 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
 <div class="topbar">
     <div>Tipsy Report Submission</div>
     <div>
-        <a href="user_dashboard.php" class="logout">Back to Dashboard</a> |
+        <a href="employee_dashboard.php" class="logout">Back to Dashboard</a> |
         <a href="logout.php" class="logout">Logout</a>
     </div>
 </div>
 
 <div class="container">
-    <a href="user_dashboard.php" class="back-link">&leftarrow; Back to Dashboard</a>
+    <a href="employee_dashboard.php" class="back-link">&leftarrow; Back to Dashboard</a>
     <h2>Submit a Report</h2>
     <div class="panel">
         <form method="post" action="user_submit_report.php">
