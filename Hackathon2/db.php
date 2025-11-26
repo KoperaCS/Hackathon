@@ -3,15 +3,9 @@
 
 $host     = '127.0.0.1';
 $user     = 'root';
-<<<<<<< Updated upstream
 $password = '';        // change if needed
 $database = 'tipsy_db';
 $port     = 3306;      // or 3307 if that's your XAMPP MySQL port
-=======
-$password = '';          // change if you set a root password
-$database = 'tipsy_db';
-$port     = 3306;        // 👈 VERY IMPORTANT: match XAMPP MySQL port (3306 or 3307 usually)
->>>>>>> Stashed changes
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

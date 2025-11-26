@@ -1,5 +1,4 @@
 <?php
-// user_dashboard.php
 session_start();
 require 'db.php';
 
