@@ -18,7 +18,7 @@ CREATE TABLE report (
     user_id INT,                      -- can be NULL for anonymous
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    severity ENUM('Low','Medium','High') NOT NULL,             -- optional, AI-generated
+    severity VARCHAR(20),             -- optional, AI-generated
     category VARCHAR(50),             -- optional, AI-generated
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE SET NULL
 );
@@ -29,7 +29,7 @@ INSERT INTO admin (admin_email, admin_pass) VALUES
 ('adminjustin@tipsy.com', 'justin123'),
 ('adminkong@tipsy.com', 'kong123');
 
-INSERT INTO user (user_email, user_pass) VALUES
+INSERT INTO user (user_email, user_password) VALUES
 ('jim@tipsy.com', 'jim123'),
 ('dan@tipsy.com', 'dan123'),
 ('saul@tipsy.com', 'saul123');
@@ -40,5 +40,3 @@ INSERT INTO report (user_id, title, content, severity, category) VALUES
 (2, 'Harassment in meetings', 'Colleague made repeated inappropriate comments during meetings.', 'High', 'Harassment'),
 (NULL, 'Unauthorized access to files', 'Someone accessed confidential files without permission.', 'High', 'Security Breach'),
 (3, 'Waste of resources', 'Office supplies and budget are being wasted on unnecessary items.', 'Low', 'Financial Misconduct');
-
-select * from report;
