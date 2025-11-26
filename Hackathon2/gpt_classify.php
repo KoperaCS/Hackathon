@@ -3,7 +3,7 @@
 
 function classify_report($title, $content) {
     // ✅ HARD-CODED FOR TESTING – replace with your real key
-$apiKey = "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";
+$apiKey = "";
 
     if (!$apiKey || $apiKey === "YOUR_API_KEY_HERE") {
         // If you forgot to replace it, shout loudly
