@@ -4,7 +4,7 @@ $host     = '127.0.0.1';
 $user     = 'root';
 $password = '';        // change if needed
 $database = 'tipsy_db';
-$port     = 3307;      // or 3307 if that's your XAMPP MySQL port
+$port     = 3306;      // or 3307 if that's your XAMPP MySQL port
 
 $conn = new mysqli($host, $user, $password, $database, $port);
 
