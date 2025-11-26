@@ -2,7 +2,7 @@
 // user_submit_report.php
 session_start();
 require 'db.php';
-require 'gpt_classify.php';   // ⬅ include the GPT helper
+require 'gpt_classify.php';    // ⬅ include the GPT helper
 
 // Check if the user is logged in as a 'user'
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
@@ -20,59 +20,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     if ($title === '' || $content === '') {
         $msg = "Title and content are required.";
     } else {
-        // Use null for anonymous reports
+        // Use the logged-in user's ID or null for anonymous reports
         $user_id = $anonymous ? null : $_SESSION['user_id'];
-<<<<<<<< HEAD:Hackathon2/user_dashboard.php
 
         // 🔍 Call GPT to classify report
         list($severity, $category) = classify_report($title, $content);
 
-        // Insert into DB with GPT fields
-========
+        // --- FIX START: Update SQL and bind_param to include severity and category ---
         
-        // Ensure $user_id is the correct type for the bind_param. 
-        // A null is often treated as 'i' or 's' in mysqli depending on the version/driver.
-        // We'll use a string type for the bind to handle the possibility of null gracefully.
-        
->>>>>>>> 59ae7be0f1f4b3f0892411fd5036019f401ecbfc:Hackathon2/user_submit_report.php
+        // Prepare statement to insert all fields, including the AI-generated ones
         $stmt = $conn->prepare("
             INSERT INTO report (user_id, title, content, severity, category)
             VALUES (?, ?, ?, ?, ?)
         ");
 
-<<<<<<<< HEAD:Hackathon2/user_dashboard.php
-        // 'i' for user_id (can be null), 's' for strings
+        // The parameter types: 'i' for user_id (INT/NULL), 's' for title, content, severity, category (STRINGS)
+        // Note: For user_id (INT/NULL), mysqli_stmt_bind_param generally accepts 'i' and you pass null.
         $stmt->bind_param("issss", $user_id, $title, $content, $severity, $category);
 
         try {
             $stmt->execute();
-            $msg = "Report submitted successfully (tagged as $severity / $category).";
-========
-        // The type for user_id should be 'i' if it's an INT, but handling nulls 
-        // requires careful casting or ensuring MySQL column allows NULL.
-        // For simplicity and to match the original code:
-        $param_user_id = $user_id;
-
-        // Use 'i' for user_id if it's an integer, even if it's null (mysqli handles it)
-        $stmt->bind_param("iss", $param_user_id, $title, $content);
-
-        try {
-            $stmt->execute();
-            // Clear inputs on success by redirecting
-            header("Location: user_submit_report.php?status=success");
+            // Redirect after successful submission to clear form data and display success message
+            header("Location: user_submit_report.php?status=success&severity=" . urlencode($severity) . "&category=" . urlencode($category));
             exit;
->>>>>>>> 59ae7be0f1f4b3f0892411fd5036019f401ecbfc:Hackathon2/user_submit_report.php
         } catch (mysqli_sql_exception $e) {
             $msg = "Error submitting report: " . $e->getMessage();
         }
 
         $stmt->close();
+        // --- FIX END ---
     }
 }
 
 // Check for status messages on page load (after successful redirect)
 if (isset($_GET['status']) && $_GET['status'] === 'success') {
-    $msg = "Report submitted successfully.";
+    $severity_msg = htmlspecialchars($_GET['severity'] ?? 'N/A');
+    $category_msg = htmlspecialchars($_GET['category'] ?? 'N/A');
+    $msg = "Report submitted successfully (AI-classified as **$severity_msg / $category_msg**).";
 }
 ?>
 <!DOCTYPE html>
@@ -169,7 +153,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
             <button type="submit" name="submit_report">Send Report</button>
         </form>
         <?php if ($msg): ?>
-            <div class="msg"><?= htmlspecialchars($msg) ?></div>
+            <div class="msg"><?= $msg ?></div>
         <?php endif; ?>
     </div>
 </div>

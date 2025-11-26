@@ -3,7 +3,7 @@
 
 function classify_report($title, $content) {
     // ✅ HARD-CODED FOR TESTING – replace with your real key
-$apiKey = "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";
+$apiKey = "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";
 
     if (!$apiKey || $apiKey === "YOUR_API_KEY_HERE") {
         // If you forgot to replace it, shout loudly
