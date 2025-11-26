@@ -29,7 +29,7 @@ INSERT INTO admin (admin_email, admin_pass) VALUES
 ('adminjustin@tipsy.com', 'justin123'),
 ('adminkong@tipsy.com', 'kong123');
 
-INSERT INTO user (user_email, user_password) VALUES
+INSERT INTO user (user_email, user_pass) VALUES
 ('jim@tipsy.com', 'jim123'),
 ('dan@tipsy.com', 'dan123'),
 ('saul@tipsy.com', 'saul123');
