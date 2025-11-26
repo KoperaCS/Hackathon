@@ -2,7 +2,11 @@
 // user_submit_report.php
 session_start();
 require 'db.php';
+<<<<<<< Updated upstream
 require 'gpt_classify.php';   // ⬅➡ GPT classification included
+=======
+require 'gpt_classify.php';   // include the GPT helper
+>>>>>>> Stashed changes
 
 // Check if the user is logged in as a 'user'
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
@@ -12,6 +16,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
 
 $msg = '';
 
+// Handle POST submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     $title     = trim($_POST['title'] ?? '');
     $content   = trim($_POST['content'] ?? '');
@@ -20,34 +25,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     if ($title === '' || $content === '') {
         $msg = "Title and content are required.";
     } else {
+<<<<<<< Updated upstream
         $user_id = $anonymous ? null : $_SESSION['user_id'];
 
         // ⭐ GPT CLASSIFICATION HERE
         list($severity, $category) = classify_report($title, $content);
 
         // Prepare SQL insert
+=======
+        // Use NULL for anonymous reports
+        $user_id = $anonymous ? null : $_SESSION['user_id'];
+
+        // 🔍 Call GPT to classify report (severity, category)
+        list($severity, $category) = classify_report($title, $content);
+
+        // Prepare insert
+>>>>>>> Stashed changes
         $stmt = $conn->prepare("
             INSERT INTO report (user_id, title, content, severity, category)
             VALUES (?, ?, ?, ?, ?)
         ");
 
+<<<<<<< Updated upstream
+=======
+        // user_id is INT (can be NULL), the rest are strings
+>>>>>>> Stashed changes
         $stmt->bind_param("issss", $user_id, $title, $content, $severity, $category);
 
         try {
             $stmt->execute();
+<<<<<<< Updated upstream
             header("Location: user_submit_report.php?status=success");
+=======
+            $stmt->close();
+
+            // Redirect to avoid form re-submission on refresh
+            header(
+                "Location: user_submit_report.php?status=success" .
+                "&severity=" . urlencode($severity) .
+                "&category=" . urlencode($category)
+            );
+>>>>>>> Stashed changes
             exit;
         } catch (mysqli_sql_exception $e) {
             $msg = "Error submitting report: " . $e->getMessage();
+            if (isset($stmt) && $stmt) {
+                $stmt->close();
+            }
         }
-
-        $stmt->close();
     }
 }
 
+<<<<<<< Updated upstream
 // Show success message
+=======
+// Handle status message after redirect
+>>>>>>> Stashed changes
 if (isset($_GET['status']) && $_GET['status'] === 'success') {
-    $msg = "Report submitted successfully.";
+    $sev = $_GET['severity'] ?? '';
+    $cat = $_GET['category'] ?? '';
+
+    if ($sev && $cat) {
+        $msg = "Report submitted successfully (tagged as $sev / $cat).";
+    } else {
+        $msg = "Report submitted successfully.";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -58,8 +100,23 @@ if (isset($_GET['status']) && $_GET['status'] === 'success') {
     <title>Submit a Report - Tipsy</title>
     <link rel="stylesheet" href="style.css">
     <style>
+<<<<<<< Updated upstream
         body { font-family: Arial, sans-serif; background:#f5f5f5; margin:0; }
         .topbar { background:#333; color:white; padding:10px 20px; display:flex; justify-content:space-between; }
+=======
+        body {
+            font-family: Arial, sans-serif;
+            background:#f5f5f5;
+            margin:0;
+        }
+        .topbar {
+            background:#333;
+            color:white;
+            padding:10px 20px;
+            display:flex;
+            justify-content:space-between;
+        }
+>>>>>>> Stashed changes
         a.logout { color:#fff; text-decoration:none; }
         .container { padding:20px; max-width:600px; margin: auto; }
         .panel { background:#fff; padding:15px; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.10); margin-top: 20px; }
